@@ -1,0 +1,16 @@
+---
+Test:
+  source:
+    -
+      type: Module
+      name: CGI
+    -
+      type: Module
+      name: CGI::Application
+    -
+      type: File
+      path: D:/Git/EPublisher/lib/EPublisher.pm
+  target:
+    type: EPub
+    author: Renee Baecker
+    output: ./test.epub
