@@ -64,9 +64,7 @@ sub deploy {
     
     my $counter = 1;
     
-    for my $pod ( @{$pods} ) {
-        $self->publisher->debug( 'Test' );
-    
+    for my $pod ( @{$pods} ) {    
         my $parser = Pod::Simple::XHTML->new;
         $parser->index(0);
         
@@ -103,7 +101,13 @@ sub deploy {
     unlink $css_filename if !$self->user_css;
 
     # Generate the ePub eBook.
-    $epub->pack_zip( $out_filename );
+    my $success = $epub->pack_zip( $out_filename );
+    if ( !$success ) {
+        $self->publisher->debug( "402: can't create epub" );
+        return '';
+    }
+    
+    return $out_filename;
 }
 
 sub add_to_table_of_contents {
@@ -138,32 +142,13 @@ sub _html_header {
           . qq{<body>\n};
 }
 
-*Pod::Simple::XHTML::start_L  = sub {
-
-    # The main code is taken from Pod::Simple::XHTML.
-    my ( $self, $flags ) = @_;
-    my ( $type, $to, $section ) = @{$flags}{ 'type', 'to', 'section' };
-    my $url =
-        $type eq 'url' ? $to
-      : $type eq 'pod' ? $self->resolve_pod_page_link( $to, $section )
-      : $type eq 'man' ? $self->resolve_man_page_link( $to, $section )
-      :                  undef;
-
-    # This is the new/overridden section.
-    if ( defined $url ) {
-        $url = Pod::Simple::XHTML::encode_entities( $url );
-    }
-
-    # If it's an unknown type, use an attribute-less <a> like HTML.pm.
-    $self->{'scratch'} .= '<a' . ( $url ? ' href="' . $url . '">' : '>' );
-};
-
 sub set_table_of_contents {
     my ($self,$epub,$pod_headings) = @_;
 
-    my $play_order   = 1;
-    my $navpoint_obj = $epub;
-    
+    my $play_order        = 1;
+    my $max_heading_level = $self->_config->{max_heading_level} || 2;
+    my @navpoints         = ($epub) x ($max_heading_level + 1);
+        
     for my $content_part ( @{$pod_headings} ) {
         
         my $headings = $content_part->{headings};
@@ -177,10 +162,10 @@ sub set_table_of_contents {
             my $content       = "text/$page.xhtml";
 
             # Only deal with head1 and head2 headings.
-            next if $heading_level > 2;
+            next if $heading_level > $max_heading_level;
 
             # Add the pod section to the NCX data, Except for the root heading.
-            $content .= '#' . $section if $play_order > 1;
+            $content .= '#' . $section;# if $play_order > 1;
 
             my %options = (
                 content    => $content,
@@ -192,12 +177,10 @@ sub set_table_of_contents {
             $play_order++;
 
             # Add the navpoints at the correct nested level.
-            if ( $heading_level == 1 ) {
-                $navpoint_obj = $epub->add_navpoint( %options );
-            }
-            else {
-                $navpoint_obj->add_navpoint( %options );
-            }
+            my $navpoint_obj = $navpoints[ $heading_level - 1 ];
+            $navpoint_obj    = $navpoint_obj->add_navpoint( %options );
+            
+            $navpoints[ $heading_level ] = $navpoint_obj;
         }
     }
 }
@@ -263,7 +246,7 @@ sub add_cover {
       . qq[<style type="text/css"> img { max-width: 100%; }</style>\n]
       . qq[</head>\n]
       . qq[<body>\n]
-      . qq[    <img alt="" src="../images/cover.jpg" />\n]
+      . qq[    <p><img alt="" src="../images/cover.jpg" /></p>\n]
       . qq[</body>\n]
       . qq[</html>\n\n];
 
@@ -289,6 +272,55 @@ sub add_cover {
     unlink $cover_xhtml;
 
     return $cover_id;
+}
+
+
+
+{
+    no warnings 'redefine';
+
+    *Pod::Simple::XHTML::start_L  = sub {
+
+        # The main code is taken from Pod::Simple::XHTML.
+        my ( $self, $flags ) = @_;
+        my ( $type, $to, $section ) = @{$flags}{ 'type', 'to', 'section' };
+        my $url =
+            $type eq 'url' ? $to
+          : $type eq 'pod' ? $self->resolve_pod_page_link( $to, $section )
+          : $type eq 'man' ? $self->resolve_man_page_link( $to, $section )
+          :                  undef;
+
+        # This is the new/overridden section.
+        if ( defined $url ) {
+            $url = Pod::Simple::XHTML::encode_entities( $url );
+        }
+
+        # If it's an unknown type, use an attribute-less <a> like HTML.pm.
+        $self->{'scratch'} .= '<a' . ( $url ? ' href="' . $url . '">' : '>' );
+    };
+    
+    *Pod::Simple::XHTML::start_Document = sub {
+        my ($self) = @_;
+
+        my $xhtml_headers =
+            qq{<?xml version="1.0" encoding="UTF-8"?>\n}
+          . qq{<!DOCTYPE html\n}
+          . qq{ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"\n}
+          . qq{ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\n} . qq{\n}
+          . qq{<html xmlns="http://www.w3.org/1999/xhtml">\n}
+          . qq{<head>\n}
+          . qq{<title></title>\n}
+          . qq{<meta http-equiv="Content-Type" }
+          . qq{content="text/html; charset=iso-8859-1"/>\n}
+          . qq{<link rel="stylesheet" href="../styles/style.css" }
+          . qq{type="text/css"/>\n}
+          . qq{</head>\n} . qq{\n}
+          . qq{<body>\n};
+
+
+        $self->{'scratch'} .= $xhtml_headers;
+        $self->emit('nowrap');
+    }
 }
 
 1;
