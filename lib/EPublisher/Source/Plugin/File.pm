@@ -17,7 +17,11 @@ sub load_source{
     
     my $file = $options->{path};
     
-    return '' unless $file && -f $file;
+    unless( $file && -f $file ) {
+        $self->publisher->debug( "400: $file -> " . ( -f $file or 0 ) );
+        return '';
+    }
+    
     return extract_pod( $file );
 }
 
