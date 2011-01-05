@@ -2,15 +2,9 @@
 Test:
   source:
     -
-      type: Module
-      name: CGI
-    -
-      type: Module
-      name: CGI::Application
-    -
       type: File
       path: D:/Git/EPublisher/Backend/lib/EPublisher.pm
   target:
-    type: PDF
+    type: EPub
     author: Renee Baecker
-    output: ./test.pdf
+    output: ./test.epub
