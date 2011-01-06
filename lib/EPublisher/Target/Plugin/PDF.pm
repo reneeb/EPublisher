@@ -15,16 +15,6 @@ our @ISA = qw(EPublisher::Target::Base);
 our $VERSION = 0.01;
 our $DEBUG   = 0;
 
-my $h1_size = 16;
-my $h2_size = 14;
-my $h3_size = 12;
-my $text_size = 11;
-
-my $text_font;
-my $bold_font;
-my $italic_font;
-my $verbatim_font;
-
 sub deploy {
     my ($self) = @_;
     
@@ -55,13 +45,178 @@ sub deploy {
         Title        => $title,
     );
     
+    $self->_define_fonts( $pdf );
+    $self->_init_textsize;
+    $self->_init_fontmap;
+    
     $self->add_cover( $pdf, $cover_filename );
-    $self->add_table_of_contents( $pdf );
     $self->add_chapters( $pdf );
+    $self->add_table_of_contents( $pdf );
 }
 
 sub add_cover {
     my ($self, $pdf, $cover) = @_;
+}
+
+sub add_chapters {
+    my ($self,$pdf) = @_;
+    
+    
+}
+
+sub add_table_of_contents {
+    my ($self, $pdf) = @_;
+    
+    my @headlines = @{ $self->{headlines} || [] };
+    
+    # insert toc as page nr 2
+    my $page = $pdf->page( 2 );
+    
+    my $title = $self->_config->{toc_title} || 'Table of Content';
+    
+    # add title
+    my ($title_font, $title_size) = $self->font( 'head1' );
+    my @title_pos                 = $self->position( 'page_header' );
+    my $title_text                = $pdf->text;
+    
+    $title_text->font( $title_font, $title_size );
+    $title_text->translate( @title_pos );
+    $title_text->text_left( $title );
+    
+    
+    # add toc
+    my $fonttype      = 'default';
+    my ($font, $size) = $self->font( $fonttype );
+    my @text_pos      = $self->position( 'text' );
+    
+    for my $head ( @headlines ) {
+        my $text_object   = $pdf->text;
+        my $text          = $head->{text};
+        
+        my $width = $self->text_width( $text, $font, $size );
+        my $dots  = sprintf ' %s ', '.' x 3;
+        
+        $text_object->font($font,$size);
+        $text_object->translate( @text_pos );
+        $text_object->text_left( $text . $dots . $head->{page} );
+    }
+}
+
+sub position {
+    my ($self,$name) = @_;
+    
+    unless( $self->{position} ) {
+        $self->{position} = {
+            page_header => [0,0],
+            text        => [0,0],
+            default     => [0,0],
+        };
+    }
+    
+    if ( !$name or !exists $self->{position}->{$name} ) {
+        $name = 'default';
+    }
+    
+    return @{$self->{position}->{$name}};
+}
+
+sub font {
+    my ($self,$name) = @_;
+    
+    my $map  = $self->_fontmap( $name );
+    my $font = $self->_font( $map );
+    my $size = $self->_textsize( $name );
+    
+    return ( $font, $size );
+}
+
+sub _textsize {
+    my ($self,$name) = @_;
+    
+    if( !$name or !exists $self->{textsize}->{$name} ) {
+        $name = 'default';
+    }
+    
+    return $self->{textsize}->{$name};
+}
+
+sub _init_textsize {
+    my ($self) = @_;
+    
+    $self->{textsize} = $self->_config->{textsize} || {
+        head1   => 14,
+        head2   => 12,
+        head3   => 11,
+        head4   => 10,
+        default => 10,
+    };
+}
+
+sub _fontmap {
+    my ($self,$name) = @_;
+    
+    if ( !$name or !exists $self->{fontmap}->{$name} ) {
+        $name = 'default';
+    }
+    
+    return $self->{fontmap}->{$name};
+}
+
+sub _init_fontmap {
+    my ($self) = @_;
+    
+    $self->{fontmap} = $self->_config->{fontmap} || {
+        head1    => 'Helvetica-Bold',
+        head2    => 'Helvetica-Bold',
+        head3    => 'Helvetica-Bold',
+        head4    => 'Helvetica-Bold',
+        C        => 'Times',
+        verbatim => 'Times',
+        L        => 'Helvetica-Italic',
+        default  => 'Helvetica',
+    };
+}
+
+sub _font {
+    my ($self,$name) = @_;
+    
+    return if !$name;
+    
+    my @parts = split /-/, $name;
+    
+    my $sub = $self->{fonts};
+    
+    PART:
+    for my $part ( @parts ) {
+        
+        last PART if ref $sub and blessed $sub;
+        
+        return if ref $sub ne 'HASH';
+        return if !exists $sub->{$part};
+        
+        $sub = $self->{fonts}->{$part};
+    }
+    
+    return if ref $sub and !blessed $sub;
+    return $sub;
+}
+
+sub _define_fonts {
+    my ($self,$pdf) = @_;
+    
+    $self->{fonts} = {
+        Helvetica => {
+            Bold   => $pdf->corefont( 'Helvetica-Bold',    -encoding => 'UTF-8' ),
+            Italic => $pdf->corefont( 'Helvetica',         -encoding => 'UTF-8' ),
+            Roman  => $pdf->corefont( 'Helvetica-Oblique', -encoding => 'UTF-8' ),
+        },
+        Times => {
+            Bold   => $pdf->corefont( 'Times-Bold',        -encoding => 'UTF-8' ),
+            Italic => $pdf->corefont( 'Times',             -encoding => 'UTF-8' ),
+            Roman  => $pdf->corefont( 'Times-Italic',      -encoding => 'UTF-8' ),
+        },
+    };
+}
 
 sub _parse_file {
     my ( $self, $file ) = @_;
@@ -73,8 +228,8 @@ sub _parse_file {
             $_->[0] =~ m{ \A head [12] \z }xms;
     }@{ $self->{tree} } ];
     
-    use Data::Dumper;
-    print Data::Dumper::Dumper [ $self->{tree}, $self->{content} ];
+    #use Data::Dumper;
+    #print Data::Dumper::Dumper [ $self->{tree}, $self->{content} ];
 }
 
 1;
