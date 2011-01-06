@@ -2,8 +2,8 @@
 Test:
   source:
     -
-      type: Module
-      name: CGI
+      type: File
+      path: D:/Git/EPublisher/Backend/example/test.pod
     -
       type: Module
       name: CGI::Application

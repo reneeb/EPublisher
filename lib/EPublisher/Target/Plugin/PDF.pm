@@ -7,6 +7,7 @@ use Encode;
 use File::Temp qw(tempfile);
 use PDF::API2;
 use Pod::Simple::SimpleTree;
+use Scalar::Util qw(blessed);
 
 use EPublisher;
 use EPublisher::Target::Base;
@@ -14,6 +15,9 @@ our @ISA = qw(EPublisher::Target::Base);
 
 our $VERSION = 0.01;
 our $DEBUG   = 0;
+
+my $start_x = 0;
+my $start_y = 0;
 
 sub deploy {
     my ($self) = @_;
@@ -61,7 +65,42 @@ sub add_cover {
 sub add_chapters {
     my ($self,$pdf) = @_;
     
+    my $counter = 0;
     
+    PART:
+    for my $part ( @{$self->{tree}} ) {
+        next PART unless ref $part;
+        next PART unless ref $part eq 'ARRAY';
+        
+        my $success = $self->_add_text( $pdf, $part );
+    }
+}
+    
+# a part looks something like that:
+# [
+#     'POD-Directive',
+#     { ... some info like line in source ... },
+#     'text',
+#     [ ... nested part ...],                       # optional
+#     'more text...',                               # optional
+# ]
+sub _add_text {
+    my ($self,$pdf,$part) = @_;
+    
+    my ($what,$info,@text) = @{$part};
+    for my $textpart ( @text ) {
+        my $ref = ref $textpart;
+        if ( $ref and $ref eq 'ARRAY' ) {
+            $self->_add_text( $pdf, $textpart );
+        }
+        
+        # skip any references
+        next TEXTPART if $ref;
+        
+        # add text to pdf
+        
+        # check text overflows the page -> create a new page
+    }
 }
 
 sub add_table_of_contents {
@@ -76,48 +115,53 @@ sub add_table_of_contents {
     
     # add title
     my ($title_font, $title_size) = $self->font( 'head1' );
-    my @title_pos                 = $self->position( 'page_header' );
-    my $title_text                = $pdf->text;
+    my $title_text                = $page->text;
     
     $title_text->font( $title_font, $title_size );
-    $title_text->translate( @title_pos );
-    $title_text->text_left( $title );
+    $title_text->translate( $start_x, $start_y );
+    my ( $x, $y ) = $title_text->text_left( $title );
     
+    # reset positions
+    $x  = $start_x;
+    $y += $title_size * 1.5;
     
     # add toc
     my $fonttype      = 'default';
     my ($font, $size) = $self->font( $fonttype );
-    my @text_pos      = $self->position( 'text' );
     
     for my $head ( @headlines ) {
-        my $text_object   = $pdf->text;
-        my $text          = $head->{text};
-        
-        my $width = $self->text_width( $text, $font, $size );
-        my $dots  = sprintf ' %s ', '.' x 3;
+        my $text_object   = $page->text;
         
         $text_object->font($font,$size);
-        $text_object->translate( @text_pos );
-        $text_object->text_left( $text . $dots . $head->{page} );
+        
+        my $text = $self->_get_toc_text( $head, $text_object );
+        
+        $text_object->translate( $x, $y );
+        ($x,$y) = $text_object->text_left( $text );
+        
+        # reset positions
+        $x = $start_x;
+        $y += $size * 1.5;
     }
 }
 
-sub position {
-    my ($self,$name) = @_;
+# a line in toc
+sub _get_toc_text {
+    my ($self,$head,$txt) = @_;
     
-    unless( $self->{position} ) {
-        $self->{position} = {
-            page_header => [0,0],
-            text        => [0,0],
-            default     => [0,0],
-        };
-    }
+    # TODO: When headline is too long, it has to be split in several lines
+    #       Where the page is at the end of line 1
     
-    if ( !$name or !exists $self->{position}->{$name} ) {
-        $name = 'default';
-    }
+    my $spacer     = $self->_config->{spacer} || '.';
+    my $headline   = $head->{text} . ' ';
+    my $page       = sprintf "%5s", $head->{page};
+    my $text_width = $txt->advancewidth( $headline );
+    my $dot_width  = $txt->advancewidth( $spacer );
+    my $page_width = $txt->advancewidth( $page );
+    my $max_width  = 222;
+    my $dots       = $spacer x int( ( $max_width - $text_width - $page_width) / $dot_width );
     
-    return @{$self->{position}->{$name}};
+    return "$headline$dots$page";
 }
 
 sub font {
@@ -222,14 +266,9 @@ sub _parse_file {
     my ( $self, $file ) = @_;
     
     $self->{tree}    = Pod::Simple::SimpleTree->new->parse_file( $file )->root;
-    $self->{content} = [ grep{
-        my $ref = ref $_;
-        $ref and $ref eq 'ARRAY' and
-            $_->[0] =~ m{ \A head [12] \z }xms;
-    }@{ $self->{tree} } ];
     
     #use Data::Dumper;
-    #print Data::Dumper::Dumper [ $self->{tree}, $self->{content} ];
+    #print Data::Dumper::Dumper [ $self->{tree} ];
 }
 
 1;
