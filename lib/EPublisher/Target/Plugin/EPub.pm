@@ -242,9 +242,11 @@ sub add_cover {
         warn "Cover image $cover_filename not found.\n";
         return undef;
     }
+    
+    my $cover_basename = basename $cover_filename;
 
     # Add cover metadata for iBooks.
-    my $cover_id = $epub->copy_image( $cover_filename, 'images/cover.jpg' );
+    my $cover_id = $epub->copy_image( $cover_filename, "images/$cover_basename" );
     $epub->add_meta_item( 'cover', $cover_id );
 
     # Add an additional cover page for other eBook readers.
