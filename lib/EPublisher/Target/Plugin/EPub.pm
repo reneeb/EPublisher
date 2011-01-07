@@ -5,6 +5,7 @@ use warnings;
 use Carp;
 use Data::UUID;
 use EBook::EPUB;
+use File::Basename;
 use File::Temp qw(tempfile);
 use Pod::Simple::XHTML;
 
@@ -20,12 +21,13 @@ sub deploy {
     
     my $pods = $self->_config->{source} || [];
     
-    my $author         = $self->_config->{author} || 'Perl Author';
-    my $title          = $self->_config->{title}  || 'Pod Document';
-    my $language       = $self->_config->{lang}   || 'en';
-    my $out_filename   = $self->_config->{output} || '';
-    my $css_filename   = $self->_config->{css}    || '';
-    my $cover_filename = $self->_config->{cover}  || '';
+    my $author         = $self->_config->{author}   || 'Perl Author';
+    my $title          = $self->_config->{title}    || 'Pod Document';
+    my $language       = $self->_config->{lang}     || 'en';
+    my $out_filename   = $self->_config->{output}   || '';
+    my $css_filename   = $self->_config->{css}      || '';
+    my $cover_filename = $self->_config->{cover}    || '';
+    my $encoding       = $self->_config->{encoding} || 'utf-8';
     my $version        = 0;
     
     # Create EPUB object
@@ -62,18 +64,22 @@ sub deploy {
     # Add package content: stylesheet, font, xhtml
     $epub->copy_stylesheet( $css_filename, 'styles/style.css' );
     
-    my $counter = 1;
+    my $counter       = 1;
+    my $image_counter = 1;
     
     for my $pod ( @{$pods} ) {    
         my $parser = Pod::Simple::XHTML->new;
         $parser->index(0);
         
+        $parser->accept_directive_as_processed( 'image' );
+        
         my ($in_fh_temp,$in_file_temp) = tempfile();
+        binmode $in_fh_temp, ":encoding($encoding)";
         print $in_fh_temp $pod;
         close $in_fh_temp;
         
         my $in_fh;
-        open $in_fh, '<', $in_file_temp;
+        open $in_fh, "<:encoding($encoding)", $in_file_temp;
     
         my ($xhtml_fh, $xhtml_filename) = tempfile();
         
@@ -90,6 +96,15 @@ sub deploy {
         unlink $in_file_temp;
         
         $self->add_to_table_of_contents( $counter, $parser->{to_index} );
+        
+        # add images
+        my @images = $parser->images_to_import();
+        for my $image ( @images ) {
+            my $path     = $image->{path};
+            my $name     = $image->{name};
+            my $image_id = $epub->copy_image( $path, "images/$name" );
+            $epub->add_meta_item( "image$image_counter", $image_id );
+        }
         
         $counter++;
     }
@@ -274,10 +289,49 @@ sub add_cover {
     return $cover_id;
 }
 
-
+## -------------------------------------------------------------------------- ##
+## Change behavour of Pod::Simple::XHTML
+## -------------------------------------------------------------------------- ##
 
 {
     no warnings 'redefine';
+    
+    sub Pod::Simple::XHTML::images_to_import {
+        my ($self) = @_;
+        
+        return @{ $self->{images_to_import} || [] };
+    };
+    
+    *Pod::Simple::XHTML::end_image =sub {
+        my ($self) = @_;
+        
+        my %regexe = (
+            path_quoted => qr/"([^"]+)"(?:\s+(.*))?/s, # =image "C:\path with\whitespace.png" alt text
+            path_plain  => qr/([^\s]+)(?:\s+(.*))?/s,  # =image C:\path\img.png alt text
+        );
+        
+        my $text  = $self->{scratch};
+        my $regex = $text =~ /^\s*"/ ? $regexe{path_quoted} : $regexe{path_plain};
+        
+        my ($path,$alt) = $text =~ $regex;
+        $alt = '' if !defined $alt;
+        
+        return if !$path;
+        
+        if ( !-e $path ) {
+            warn "Image $path does not exist!";
+            return;
+        }
+        
+        my $filename     = basename $path;
+        
+        # save complete path in $self->{images_to_import}
+        push @{$self->{images_to_import}}, { path => $path, name => $filename };
+        
+        $self->{scratch} = qq~<img src="../images/$filename" alt="$alt" />~;
+        
+        $self->emit;
+    };
 
     *Pod::Simple::XHTML::start_L  = sub {
 
@@ -311,7 +365,7 @@ sub add_cover {
           . qq{<head>\n}
           . qq{<title></title>\n}
           . qq{<meta http-equiv="Content-Type" }
-          . qq{content="text/html; charset=iso-8859-1"/>\n}
+          . qq{content="text/html; charset=utf-8"/>\n}
           . qq{<link rel="stylesheet" href="../styles/style.css" }
           . qq{type="text/css"/>\n}
           . qq{</head>\n} . qq{\n}

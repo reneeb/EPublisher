@@ -34,7 +34,9 @@ sub extract_pod_from_code {
         },
     );
     
-    my $merged = PPI::Token::Pod->merge( @{$pod_nodes} );
+    my $merged = PPI::Token::Pod->merge( @{$pod_nodes || []} );
+    
+    return '' if !$merged;
     return $merged->content;
 }
 

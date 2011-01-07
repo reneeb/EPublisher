@@ -46,10 +46,12 @@ sub run{
             my $source_obj = EPublisher::Source->new( $source );
             $source_obj->publisher( $self );
             
-            my $pod        = $source_obj->load_source || '';
-            $self->debug('101: ' . substr $pod, 0, 50 );
+            my @pod_source = $source_obj->load_source;
+            @pod_source = ('') if !@pod_source;
             
-            push @pods, $pod;
+            $self->debug('101: ' . substr "@pod_source", 0, 50 );
+            
+            push @pods, @pod_source;
         }        
         
         $config->{target}->{source} = \@pods;
