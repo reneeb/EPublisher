@@ -32,9 +32,12 @@ sub config{
 
 sub run{
     my ($self,$projects) = @_;
-    
+
+    PROJECT:    
     for my $project ( @$projects ){
         my $config   = $self->_config->{$project};
+        
+        next PROJECT if !$config;
         
         # load the source
         my $sources = $config->{source};
