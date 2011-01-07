@@ -27,7 +27,20 @@ sub config{
         $self->{_configfile} = $file;
         $self->_config(1);
     }
+    
     return $self->{_configfile};
+}
+
+sub projects {
+    my ($self) = @_;
+    
+    my $config = $self->_config;
+    
+    return if !$config;
+    return if !ref $config;
+    return if ref $config ne 'HASH';
+    
+    return keys %{$config};
 }
 
 sub run{
