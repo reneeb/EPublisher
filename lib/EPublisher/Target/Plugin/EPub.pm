@@ -221,6 +221,7 @@ sub get_css_file {
 
     print $css_fh "h1         { font-size: 110%; }\n";
     print $css_fh "h2, h3, h4 { font-size: 100%; }\n";
+    print $css_fh ".code      { font-family: Courier; }\n";
 
     close $css_fh;
 
@@ -263,7 +264,7 @@ sub add_cover {
       . qq[<style type="text/css"> img { max-width: 100%; }</style>\n]
       . qq[</head>\n]
       . qq[<body>\n]
-      . qq[    <p><img alt="" src="../images/cover.jpg" /></p>\n]
+      . qq[    <p><img alt="" src="../images/$cover_basename" /></p>\n]
       . qq[</body>\n]
       . qq[</html>\n\n];
 
@@ -298,13 +299,25 @@ sub add_cover {
 {
     no warnings 'redefine';
     
+    sub Pod::Simple::XHTML::start_Verbatim {}
+    
+    sub Pod::Simple::XHTML::end_Verbatim {
+        my ($self) = @_;
+        
+        $self->{scratch} =~ s{  }{ &nbsp;}g;
+        $self->{scratch} =~ s{\n}{<br />}g;
+        $self->{scratch} =  '<div class="code">' . $self->{scratch} . '</div>';
+        
+        $self->emit;
+    }
+    
     sub Pod::Simple::XHTML::images_to_import {
         my ($self) = @_;
         
         return @{ $self->{images_to_import} || [] };
     };
     
-    *Pod::Simple::XHTML::end_image =sub {
+    sub Pod::Simple::XHTML::end_image {
         my ($self) = @_;
         
         my %regexe = (
