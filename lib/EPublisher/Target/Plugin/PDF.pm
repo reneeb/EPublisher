@@ -130,6 +130,9 @@ sub add_table_of_contents {
     my ($font, $size) = $self->font( $fonttype );
     
     for my $head ( @headlines ) {
+        
+        # TODO: when headline should be on next page, create a new page_width
+        
         my $text_object   = $page->text;
         
         $text_object->font($font,$size);
