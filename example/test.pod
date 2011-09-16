@@ -1,5 +1,3 @@
-=encoding utf8
-
 =head1 Test
 
 Das ist ein Test mit B<mehreren> Ebenen:
@@ -13,5 +11,3 @@ Das ist ein Test mit B<mehreren> Ebenen:
 Mehr zum Punkt I<Hallo>. Äußerst schön ist es, wenn die Umlaute funktionieren.
 
 =back
-
-=image C:\Users\Entwicklung\DisplayErrorTicketSearchResult.png

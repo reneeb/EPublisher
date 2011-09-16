@@ -299,6 +299,21 @@ sub add_cover {
 {
     no warnings 'redefine';
     
+    sub Pod::Simple::XHTML::idify {
+        my ($self, $t, $not_unique) = @_;
+        for ($t) {
+            s/<[^>]+>//g;            # Strip HTML.
+            s/&[^;]+;//g;            # Strip entities.
+            s/^([^a-zA-Z]+)$/pod$1/; # Prepend "pod" if no valid chars.
+            s/^[^a-zA-Z]+//;         # First char must be a letter.
+            s/[^-a-zA-Z0-9_]+/-/g; # All other chars must be valid.
+        }
+        return $t if $not_unique;
+        my $i = '';
+        $i++ while $self->{ids}{"$t$i"}++;
+        return "$t$i";
+    }
+    
     sub Pod::Simple::XHTML::start_Verbatim {}
     
     sub Pod::Simple::XHTML::end_Verbatim {
@@ -306,7 +321,8 @@ sub add_cover {
         
         $self->{scratch} =~ s{  }{ &nbsp;}g;
         $self->{scratch} =~ s{\n}{<br />}g;
-        $self->{scratch} =  '<div class="code">' . $self->{scratch} . '</div>';
+        #$self->{scratch} =  '<div class="code">' . $self->{scratch} . '</div>';
+        $self->{scratch} =  '<p><code class="code">' . $self->{scratch} . '</code></p>';
         
         $self->emit;
     }
@@ -343,7 +359,7 @@ sub add_cover {
         # save complete path in $self->{images_to_import}
         push @{$self->{images_to_import}}, { path => $path, name => $filename };
         
-        $self->{scratch} = qq~<img src="../images/$filename" alt="$alt" />~;
+        $self->{scratch} = qq~<p><img src="../images/$filename" alt="$alt" /></p>~;
         
         $self->emit;
     };
