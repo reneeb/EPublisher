@@ -1,5 +1,7 @@
 package EPublisher::Utils::PPI;
 
+# ABSTRACT: PPI utility for EPublisher
+
 use strict;
 use warnings;
 
@@ -12,6 +14,8 @@ our @EXPORT_OK = qw(
     extract_pod
     extract_pod_from_code
 );
+
+our $VERSION = 0.1;
 
 sub extract_pod {
     my ($file) = @_;
@@ -42,9 +46,41 @@ sub extract_pod_from_code {
 
 1;
 
-=head1 NAME
+=head1 DESCRIPTION
 
-EPublisher::Utils::PPI - PPI utility for EPublisher
+This module provides some functions to retrieve information about
+modules and/or perl files. It uses L<PPI> to analyze those
+files.
+
+=head1 SYNOPSIS
+
+  use EPublisher::Utils::PPI qw(extract_pod extract_pod_from_code);
+  
+  my $file = '/usr/local/share/perl/5.12.1/CGI.pm';
+  my $pod  = extract_pod( $file );
+  
+  my $code = <<PERL;
+  sub test {
+  }
+
+  =head1 METHODS
+
+  =head2 test
+
+  Docs for subroutine "test"
+  PERL
+  
+  my $pod_from_code = extract_pod_from_code( $code );
+
+=head1 METHODS
+
+=head2 extract_pod
+
+Get Pod documentation from file.
+
+=head2 extract_pod_from_code
+
+Get the documentation of a piece of code...
 
 =head1 COPYRIGHT & LICENSE
 

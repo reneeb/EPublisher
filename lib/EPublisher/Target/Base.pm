@@ -1,5 +1,7 @@
 package EPublisher::Target::Base;
 
+# ABSTRACT: Base class for Target plugins
+
 use strict;
 use warnings;
 use Carp;
@@ -32,10 +34,6 @@ sub _config{
 
 1;
 
-=head1 NAME
-
-EPublisher::Target::Base - Base class for Target plugins
-
 =head1 SYNOPSIS
 
   package EPublisher::Target::Plugin::AnyTarget;
@@ -48,6 +46,8 @@ EPublisher::Target::Base - Base class for Target plugins
 =head1 METHODS
 
 =head2 new
+
+=head2 publisher
 
 =head2 _config
 

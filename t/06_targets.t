@@ -16,7 +16,7 @@ my $module = 'EPublisher::Target';
 use_ok( $module );
 
 #
-# Server
+# Text
 ###
 {
    my $target = $module->new({
@@ -24,8 +24,8 @@ use_ok( $module );
       file => 'test.txt',
    });
    
-   ok( $target->isa( 'EPublisher::Target::Plugin::Server' ), '$target isa EPublisher::Target::Plugin::Server' );
-   ok( $target->isa( 'EPublisher::Target::Base' ),           '$target isa EPublisher::Target::Base' );
+   ok( $target->isa( 'EPublisher::Target::Plugin::Text' ), '$target isa EPublisher::Target::Plugin::Text' );
+   ok( $target->isa( 'EPublisher::Target::Base' ),         '$target isa EPublisher::Target::Base' );
 }
 
 #

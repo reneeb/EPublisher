@@ -1,5 +1,7 @@
 package EPublisher::Source::Plugin::File;
 
+# ABSTRACT: File source plugin
+
 use strict;
 use warnings;
 
@@ -26,10 +28,6 @@ sub load_source{
 }
 
 1;
-
-=head1 NAME
-
-EPublisher::Source::Plugin::File - File source plugin
 
 =head1 SYNOPSIS
 

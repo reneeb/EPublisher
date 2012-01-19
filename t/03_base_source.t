@@ -24,5 +24,7 @@ use_ok( $module );
    ok( $source->isa( 'EPublisher::Source::Plugin::File' ), '$source isa EPublisher::Source::Plugin::File' );
    ok( $source->isa( 'EPublisher::Source::Base' ),         '$source isa EPublisher::Source::Base' );
    
-   is( $source->load_source, __FILE__, 'check *::File::load_source()' );
+   ok( $source->load_source, 'check *::File::load_source()' );
 }
+
+=head1 A unit test

@@ -1,5 +1,7 @@
 package EPublisher::Target;
 
+# ABSTRACT: Container for Target plugins
+
 use strict;
 use warnings;
 use Carp;
@@ -25,10 +27,6 @@ sub new{
 }
 
 1;
-
-=head1 NAME
-
-EPublisher::Target - Container for Target plugins
 
 =head1 SYNOPSIS
 

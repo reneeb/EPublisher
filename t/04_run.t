@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-use Test::More tests => 8;
+use Test::More tests => 7;
 use File::Spec;
 use File::Basename;
 
@@ -29,22 +29,26 @@ my $res  = $obj2->_config;
 my $check = {
    Test => {
       source   => {
-         type => 'ReneePC',
-         path => './t/scripts/mb_test.pl',
+         type => 'File',
+         path => './t/01_base.t',
       },
       target => {
-         type => 'ModuleBundle',
+         type => 'Text',
+         output => './t/text.txt',
       },
    }
 };
 
+ok -e $check->{Test}->{target}->{output};
 is_deeply( $res, $check, 'check configuration' );
+
+unlink $check->{Test}->{target}->{output};
 
 {
    require EPublisher::Config;
    my $obj = bless {}, 'EPublisher';
    
-   $obj->{_configfile} = File::Spec->catfile( $dir, 'run_3.yml' );
+   $obj->{_configfile} = File::Spec->catfile( $config_dir, 'run_3.yml' );
    $obj->{__config} = {};
    $obj->_config(1);
    
@@ -53,9 +57,6 @@ is_deeply( $res, $check, 'check configuration' );
          source => {
             type => 'ReneePC',
             path => './t/scripts/mb_test.pl',
-         },
-         utils  => {
-            type => 'S',
          },
          target => {
             type => 'Dummy',

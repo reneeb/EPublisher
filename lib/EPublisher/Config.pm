@@ -1,5 +1,6 @@
 package EPublisher::Config;
 
+# ABSTRACT: Config module for EPublisher
 use strict;
 use warnings;
 use Carp;
@@ -17,10 +18,6 @@ sub get_config{
 }
 
 1;
-
-=head1 NAME
-
-EPublisher::Config - Config module for EPublisher
 
 =head1 SYNOPSIS
 

@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-use Test::More tests => 2;
+use Test::More tests => 3;
 use File::Spec;
 use File::Temp;
 use File::Basename;
@@ -20,12 +20,12 @@ my $config = {
     Test => {
         source => {
           type => 'Module',
-          inc  => $include,
+          lib  => [ $include ],
           name => 'Text',
         },
         target => {
-            type => 'Txt',
-            file => $txt->filename,
+            type => 'Text',
+            output => $txt->filename,
         },
     }
 };
@@ -35,11 +35,13 @@ $obj->{__config} = $config;
 
 $obj->run( ['Test'] );
 
-my $check = q!100: Module 300: Text !;
+my $check = q!100: Module 101: =pod
+
+=head1 Text - a test library for text output 200: Text !;
 is( $debug, $check, 'debug' );
 
 
-my $txt_check   = "Text - a test library for text output\n\nEin Absatz im POD.";
+my $txt_check   = "Text - a test library for text output\n    Ein Absatz im POD.\n\n";
 my $txt_content = do{ local( @ARGV, $/) = $txt->filename; <> };
 is ( $txt_content, $txt_check, 'check generated text' );
 

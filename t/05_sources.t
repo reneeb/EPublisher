@@ -2,7 +2,7 @@
 
 =pod
 
-08_sources.t - test for the source plugins
+05_sources.t - test for the source plugins
 
 =cut
 
@@ -11,7 +11,7 @@ use warnings;
 
 use Data::Dumper;
 
-use Test::More tests => 21;
+use Test::More tests => 8;
 use File::Basename;
 use File::Spec;
 use lib qw(../lib ../../perllib);
@@ -26,15 +26,15 @@ use_ok( $module );
 # Module
 ###
 {
-   # test EPublisher::Source::Plugin::ReneePC
+   # test EPublisher::Source::Plugin::Module
    my $source = $module->new({
       type => 'Module',
-      name => 'EPublisher', 
+      name => 'File::Temp', 
    });
-   ok( $source->isa( 'EPublisher::Source::Plugin::ReneePC' ), '$source isa EPublisher::Source::Plugin::ReneePC' );
-   ok( $source->isa( 'EPublisher::Source::Base' ),            '$source isa EPublisher::Source::Base' );
+   ok( $source->isa( 'EPublisher::Source::Plugin::Module' ), '$source isa EPublisher::Source::Plugin::Module' );
+   ok( $source->isa( 'EPublisher::Source::Base' ),           '$source isa EPublisher::Source::Base' );
    
-   is( $source->load_source, 'EPublisher', 'check *::Module::load_source()' );
+   ok( $source->load_source, 'check *::Module::load_source()' );
 }
 
 #
@@ -49,7 +49,7 @@ use_ok( $module );
    ok( $source->isa( 'EPublisher::Source::Plugin::File' ), '$source isa EPublisher::Source::Plugin::File' );
    ok( $source->isa( 'EPublisher::Source::Base' ),         '$source isa EPublisher::Source::Base' );
    
-   is( $source->load_source, __FILE__, 'check *::SVN::LocalCopy::load_source()' );
+   ok( $source->load_source, 'check *::File::load_source()' );
 }
 
 #

@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 use EPublisher::Utils::PPI qw(extract_pod);
-use Test::More plan => 1;
+use Test::More tests => 1;
 
 =head1 NAME
 
@@ -15,7 +15,9 @@ my $file = __FILE__;
 
 my $pod = extract_pod( $file );
 
-my $check = qq~=head1 NAME
+my $check = qq~=pod
+
+=head1 NAME
 
 08_extract_pod.t - Unit test file for PPI utility module
 
@@ -23,7 +25,8 @@ my $check = qq~=head1 NAME
 
 Au. Thor
 
-=cut~;
+=cut
+~;
 
 is $pod, $check, 'check if extract_pod works ok';
 

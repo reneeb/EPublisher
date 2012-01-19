@@ -1,5 +1,7 @@
 package EPublisher::Source::Base;
 
+# ABSTRACT: Base class for Source plugins
+
 use strict;
 use warnings;
 use Carp;
@@ -32,10 +34,6 @@ sub publisher {
 
 1;
 
-=head1 NAME
-
-EPublisher::Source::Base - Base class for Source plugins
-
 =head1 SYNOPSIS
 
   package EPublisher::Source::Plugin::AnyVCS;
@@ -48,6 +46,8 @@ EPublisher::Source::Base - Base class for Source plugins
 =head1 METHODS
 
 =head2 new
+
+=head2 publisher
 
 =head2 _config
 

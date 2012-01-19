@@ -1,5 +1,7 @@
 package EPublisher::Source::Plugin::Module;
 
+# ABSTRACT:  Module source plugin
+
 use strict;
 use warnings;
 
@@ -20,17 +22,15 @@ sub load_source{
     my $options = $self->_config;
     
     return unless $options->{name};
+
+    my @my_inc = @{ $options->{lib} || [] };
     
-    my $mod = Module::Info->new_from_module( $options->{name} );
+    my $mod = Module::Info->new_from_module( $options->{name}, @my_inc );
     
     return extract_pod( $mod->file );
 }
 
 1;
-
-=head1 NAME
-
-EPublisher::Source::Plugin::Module - Module source plugin
 
 =head1 SYNOPSIS
 

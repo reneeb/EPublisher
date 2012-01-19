@@ -1,5 +1,7 @@
 package EPublisher::Source;
 
+# ABSTRACT:  Container for Source plugins
+
 use strict;
 use warnings;
 use Carp;
@@ -25,10 +27,6 @@ sub new{
 }
 
 1;
-
-=head1 NAME
-
-EPublisher::Source - Container for Source plugins
 
 =head1 SYNOPSIS
 

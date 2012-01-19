@@ -5,4 +5,4 @@ Test:
     path: ./t/01_base.t
   target:
     type: Text
-    path: ./t/text.txt       
+    output: ./t/text.txt       

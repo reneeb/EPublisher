@@ -1,5 +1,7 @@
 package EPublisher;
 
+# ABSTRACT: Publish documents in new format
+
 use strict;
 use warnings;
 use Carp;
@@ -113,10 +115,6 @@ sub _config{
 
 1;
 
-=head1 NAME
-
-EPublisher - Publish documents in new format
-
 =head1 DESCRIPTION
 
 This tool aims to simplify publishing of documents, mainly POD. To be extendable, it
@@ -154,10 +152,6 @@ L<EPublisher::Source::Base> describes how you can write your own Source-Plugin.
 other target plugins will follow.
 
 =over 4
-
-=item * EPub
-
-converts the POD to EPub.
 
 =item * Text
 
@@ -199,6 +193,12 @@ All methods available for EPublisher are described in the subsequent sections
 =head2 config
 
 =head2 run
+
+=head2 projects
+
+=head2 deploy
+
+=head2 debug
 
 =head1 PSEUDO PROTOCOL
 

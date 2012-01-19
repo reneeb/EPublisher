@@ -45,4 +45,4 @@ sub module_boilerplate_ok {
     );
 }
 
-module_boilerplate_ok('lib/DeployPro.pm');
+module_boilerplate_ok('lib/EPublisher.pm');
