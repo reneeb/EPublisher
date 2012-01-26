@@ -1,4 +1,8 @@
 Revision history for Perl extension DeployPro.
 
+0.02  2012/01/26
+        - changed return values of source plugins
+        - changed format of parameters accepted by target plugins
+
 0.01  2010/11/12
 	- original version
