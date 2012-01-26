@@ -15,7 +15,7 @@ use EPublisher;
 use EPublisher::Target::Base;
 our @ISA = qw(EPublisher::Target::Base);
 
-our $VERSION = 0.01;
+our $VERSION = 0.02;
 our $DEBUG   = 0;
 
 sub deploy {
@@ -31,7 +31,7 @@ sub deploy {
         $output = $fh->filename;
     }
 
-    my $io     = IO::String->new( join "\n\n", @{$pods} );
+    my $io     = IO::String->new( join "\n\n", map{ $_->{pod} }@{$pods} );
     my $parser = Pod::Text->new( sentence => $sentence, width => $width );
 
     $parser->parse_from_filehandle( $io, $output );
