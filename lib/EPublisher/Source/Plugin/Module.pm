@@ -14,7 +14,7 @@ use EPublisher::Utils::PPI qw(extract_pod);
 
 our @ISA = qw( EPublisher::Source::Base );
 
-our $VERSION = 0.01;
+our $VERSION = 0.02;
 
 sub load_source{
     my ($self) = @_;
@@ -27,7 +27,16 @@ sub load_source{
     
     my $mod = Module::Info->new_from_module( $options->{name}, @my_inc );
     
-    return extract_pod( $mod->file );
+    my $pod      = extract_pod( $mod->file );
+    my $filename = basename $mod->file;
+    my $title    = $options->{name};
+
+    if ( $options->{title} and $options->{title} eq 'pod' ) {
+        ($title) = $pod =~ m{ =head1 \s+ (.*) }x;
+        $title   = '' if !defined $title;
+    }
+
+    return { pod => $pod, filename => $filename, title => $title };
 }
 
 1;
@@ -45,6 +54,17 @@ sub load_source{
   my $pod = $module_source->load_source;
 
 reads the module 
+
+  {
+    pod      => $pod_document,
+    filename => $file,
+    title    => $title,
+  }
+
+C<$pod_document> is the complete pod documentation that was found in the file.
+C<$file> is the name of the file (without path) and C<$title> is the title of
+the pod documentation. By default it is the module name, but you can say "title => 'pod'"
+in the configuration. The title is the first value for I<=head1> in the pod.
 
 =head1 COPYRIGHT & LICENSE
 
