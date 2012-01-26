@@ -13,7 +13,7 @@ use EPublisher::Utils::PPI qw(extract_pod);
 
 our @ISA = qw( EPublisher::Source::Base );
 
-our $VERSION = 0.01;
+our $VERSION = 0.02;
 
 sub load_source{
     my ($self) = @_;
