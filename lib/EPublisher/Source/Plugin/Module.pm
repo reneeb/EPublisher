@@ -9,6 +9,8 @@ use Module::Info;
 
 use Data::Dumper;
 
+use File::Basename;
+
 use EPublisher::Source::Base;
 use EPublisher::Utils::PPI qw(extract_pod);
 
@@ -26,9 +28,12 @@ sub load_source{
     my @my_inc = @{ $options->{lib} || [] };
     
     my $mod = Module::Info->new_from_module( $options->{name}, @my_inc );
-    
+
+    return if !$mod;
+    return if !$mod->file;
+
     my $pod      = extract_pod( $mod->file );
-    my $filename = basename $mod->file;
+    my $filename = File::Basename::basename( $mod->file );
     my $title    = $options->{name};
 
     if ( $options->{title} and $options->{title} eq 'pod' ) {
@@ -40,6 +45,18 @@ sub load_source{
 }
 
 1;
+
+
+__END__
+=pod
+
+=head1 NAME
+
+EPublisher::Source::Plugin::Module - Module source plugin
+
+=head1 VERSION
+
+version 0.4
 
 =head1 SYNOPSIS
 
@@ -77,4 +94,17 @@ under the same terms of Artistic License 2.0.
 
 Renee Baecker (E<lt>module@renee-baecker.deE<gt>)
 
+=head1 AUTHOR
+
+Renee Baecker <module@renee-baecker.de>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is Copyright (c) 2012 by Renee Baecker.
+
+This is free software, licensed under:
+
+  The Artistic License 2.0 (GPL Compatible)
+
 =cut
+

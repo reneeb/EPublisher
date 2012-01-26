@@ -41,6 +41,18 @@ sub deploy {
 
 1;
 
+
+__END__
+=pod
+
+=head1 NAME
+
+EPublisher::Target::Plugin::Text - Use Ascii text as a target for EPublisher
+
+=head1 VERSION
+
+version 0.4
+
 =head1 SYNOPSIS
 
   use EPublisher::Target;
@@ -77,4 +89,17 @@ under the same terms of Artistic License 2.0.
 
 Renee Baecker (E<lt>module@renee-baecker.deE<gt>)
 
+=head1 AUTHOR
+
+Renee Baecker <module@renee-baecker.de>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is Copyright (c) 2012 by Renee Baecker.
+
+This is free software, licensed under:
+
+  The Artistic License 2.0 (GPL Compatible)
+
 =cut
+

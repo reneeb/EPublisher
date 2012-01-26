@@ -14,7 +14,6 @@ use Data::Dumper;
 use Test::More tests => 8;
 use File::Basename;
 use File::Spec;
-use lib qw(../lib ../../perllib);
 use YAML::Tiny;
 
 my $dir    = File::Spec->rel2abs( dirname( __FILE__ ) );

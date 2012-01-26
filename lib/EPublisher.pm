@@ -65,9 +65,9 @@ sub run{
             $source_obj->publisher( $self );
             
             my @pod_source = $source_obj->load_source;
-            @pod_source = ('') if !@pod_source;
+            @pod_source = ({ pod => '', title => '', filename => '' }) if !@pod_source;
             
-            $self->debug('101: ' . substr "@pod_source", 0, 50 );
+            $self->debug('101: ' . substr join( "", map{ $_->{pod} }@pod_source ), 0, 50 );
             
             push @pods, @pod_source;
         }        
@@ -115,6 +115,40 @@ sub _config{
 
 1;
 
+
+__END__
+=pod
+
+=head1 NAME
+
+EPublisher - Publish documents in new format
+
+=head1 VERSION
+
+version 0.4
+
+=head1 SYNOPSIS
+
+  use EPublisher;
+  
+  my $yaml     = './test.yml';
+  my @projects = qw(Test);
+  
+  my $deploy   = EPublisher->new;
+  $deploy->config( $yaml );
+  $deploy->run( \@projects );
+
+The correspondend YAML file:
+
+  ---
+  Test:
+    source:
+      type: Module
+      path: YAML::Tiny
+    target:
+      type: Text
+      path: C:\anything\YAML_Tiny.txt
+
 =head1 DESCRIPTION
 
 This tool aims to simplify publishing of documents, mainly POD. To be extendable, it
@@ -161,29 +195,6 @@ converts POD to plain text.
 
 L<EPublisher::Target::Base> describes how you can write your own Target-Plugin.
 
-=head1 SYNOPSIS
-
-  use EPublisher;
-  
-  my $yaml     = './test.yml';
-  my @projects = qw(Test);
-  
-  my $deploy   = EPublisher->new;
-  $deploy->config( $yaml );
-  $deploy->run( \@projects );
-
-The correspondend YAML file:
-
-  ---
-  Test:
-    source:
-      type: Module
-      path: YAML::Tiny
-    target:
-      type: Text
-      path: C:\anything\YAML_Tiny.txt
-  
-
 =head1 METHODS
 
 All methods available for EPublisher are described in the subsequent sections
@@ -228,4 +239,17 @@ under the terms of the Artistic License 2.0.
 
 Renee Baecker (E<lt>module@renee-baecker.deE<gt>)
 
+=head1 AUTHOR
+
+Renee Baecker <module@renee-baecker.de>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is Copyright (c) 2012 by Renee Baecker.
+
+This is free software, licensed under:
+
+  The Artistic License 2.0 (GPL Compatible)
+
 =cut
+
