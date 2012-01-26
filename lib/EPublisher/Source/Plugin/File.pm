@@ -5,12 +5,14 @@ package EPublisher::Source::Plugin::File;
 use strict;
 use warnings;
 
+use File::Basename;
+
 use EPublisher::Source::Base;
 use EPublisher::Utils::PPI qw(extract_pod);
 
 our @ISA = qw( EPublisher::Source::Base );
 
-our $VERSION = 0.01;
+our $VERSION = 0.02;
 
 sub load_source{
     my ($self) = @_;
@@ -24,7 +26,16 @@ sub load_source{
         return '';
     }
     
-    return extract_pod( $file );
+    my $pod      = extract_pod( $file );
+    my $filename = basename $file;
+    my $title    = $filename;
+
+    if ( $options->{title} and $options->{title} eq 'pod' ) {
+        ($title) = $pod =~ m{ =head1 \s+ (.*) }x;
+        $title = '' if !defined $title;
+    }
+
+    return { pod => $pod, filename => $filename, title => $title };
 }
 
 1;
@@ -33,7 +44,11 @@ sub load_source{
 
   my $source_options = { type => 'File', path => '/var/lib/CGI.pm' };
   my $file_source    = EPublisher::Source->new( $source_options );
-  my $pod            = $File_source->load_source;
+  my $info           = $File_source->load_source;
+
+  my $options = { type => 'File', path => '/path.pod', title => 'pod' };
+  my $file_source = EPublisher::Source->new( $options );
+  my $info = $file_source->load_source;
 
 =head1 METHODS
 
@@ -41,17 +56,29 @@ sub load_source{
 
   my $pod = $file_source->load_source;
 
-reads the File 
+reads the File and returns a hashreference with several information
+about the document.
+
+  {
+    pod      => $pod_document,
+    filename => $file,
+    title    => $title,
+  }
+
+C<$pod_document> is the complete pod documentation that was found in the file.
+C<$file> is the name of the file (without path) and C<$title> is the title of
+the pod documentation. By default it is the filename, but you can say "title => 'pod'"
+in the configuration. The title is the first value for I<=head1> in the pod.
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2010 Renee Baecker, all rights reserved.
+Copyright 2010 - 2012 Renee Baecker, all rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of Artistic License 2.0.
 
 =head1 AUTHOR
 
-Renee Baecker (E<lt>File@renee-baecker.deE<gt>)
+Renee Baecker (E<lt>module@renee-baecker.deE<gt>)
 
 =cut
