@@ -1,8 +1,12 @@
-Revision history for Perl extension DeployPro.
+Revision history for Perl EPublisher.
 
-0.02  2012/01/26
+0.41 2012/01/29
+        - minor documentation improvements
+        - fixed prerequesits
+
+0.4  2012/01/26
         - changed return values of source plugins
         - changed format of parameters accepted by target plugins
 
-0.01  2010/11/12
+0.3  2010/11/12
 	- original version

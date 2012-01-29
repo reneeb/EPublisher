@@ -10,7 +10,7 @@ use EPublisher::Config;
 use EPublisher::Source;
 use EPublisher::Target;
 
-our $VERSION = 0.4;
+our $VERSION = 0.41;
 
 sub new{
     my ($class,%args) = @_;
@@ -119,14 +119,6 @@ sub _config{
 __END__
 =pod
 
-=head1 NAME
-
-EPublisher - Publish documents in new format
-
-=head1 VERSION
-
-version 0.4
-
 =head1 SYNOPSIS
 
   use EPublisher;
@@ -160,17 +152,19 @@ You can write your own plugins for your favourite source format
 
 =head2 Sources
 
-"Sources" are input sources of the POD. Currently there are three sources supported.
+"Sources" are input sources of the POD. In this base package there are three source
+plugins:
 
 =over 4
+
+=item * Dir
+
+Get all *.pm and *.pod files in the given directory and its subdirectories. See
+L<EPublisher::Source::Plugin::Dir>.
 
 =item * File
 
 The Pod will be extracted from the given file.
-
-=item * URL
-
-This tool will try to get the content of that URL and extract the POD.
 
 =item * Module
 
@@ -227,29 +221,6 @@ There is a small "pseudo" protocol for the debug messages:
 =head1 PREREQUESITS
 
 L<YAML::Tiny>, L<Carp>, L<File::Spec>, L<File::Glob>,
-
-=head1 COPYRIGHT & LICENSE
-
-Copyright 2010 Renee Baecker, all rights reserved.
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of the Artistic License 2.0.
-
-=head1 AUTHOR
-
-Renee Baecker (E<lt>module@renee-baecker.deE<gt>)
-
-=head1 AUTHOR
-
-Renee Baecker <module@renee-baecker.de>
-
-=head1 COPYRIGHT AND LICENSE
-
-This software is Copyright (c) 2012 by Renee Baecker.
-
-This is free software, licensed under:
-
-  The Artistic License 2.0 (GPL Compatible)
 
 =cut
 

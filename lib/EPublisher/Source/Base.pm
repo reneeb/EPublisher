@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use Carp;
 
-our $VERSION = 0.01;
+our $VERSION = 0.02;
 
 sub new{
     my ($class,$args) = @_;
@@ -51,9 +51,23 @@ sub publisher {
 
 =head2 _config
 
+=head1 HOW TO WRITE YOUR OWN SOURCE PLUGIN
+
+It's fairly simple to write your own plugin. Basically it has to inherit from
+this module and it has to provide the methods C<new> and C<load_source>.
+
+C<new> has to return an object and C<load_source> has to return a list
+of hashreferences where each reference should look like
+
+  {
+      pod => $pod_as_string,
+      filename => $filename_of_documentation,
+      title    => $a_title_for_documentation,
+  }
+
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2010 Renee Baecker, all rights reserved.
+Copyright 2010 - 2012 Renee Baecker, all rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms of Artistic License 2.0.
