@@ -34,6 +34,9 @@ sub load_source{
         ($title) = $pod =~ m{ =head1 \s+ (.*) }x;
         $title = '' if !defined $title;
     }
+    elsif ( $options->{title} and $options->{title} ne 'pod' ) {
+        $title = $options->{title};
+    }
 
     return { pod => $pod, filename => $filename, title => $title };
 }
