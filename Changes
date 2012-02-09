@@ -1,5 +1,8 @@
 Revision history for Perl EPublisher.
 
+0.5  2012/02/09
+        + allow arbitrary titles (defined in YAML config)
+
 0.41 2012/01/29
         - minor documentation improvements
         - fixed prerequesits
