@@ -1,5 +1,8 @@
 Revision history for Perl EPublisher.
 
+0.6  2012/02/17
+        + constructor accepts a hashreference as config, too.
+
 0.5  2012/02/09
         + allow arbitrary titles (defined in YAML config)
 
