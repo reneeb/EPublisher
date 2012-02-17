@@ -10,7 +10,7 @@ use EPublisher::Config;
 use EPublisher::Source;
 use EPublisher::Target;
 
-our $VERSION = 0.5;
+our $VERSION = 0.6;
 
 sub new{
     my ($class,%args) = @_;
@@ -23,11 +23,15 @@ sub new{
 }
 
 sub config{
-    my ($self,$file) = @_;
+    my ($self,$data) = @_;
     
-    if( defined $file ){
-        $self->{_configfile} = $file;
+    my $ref = ref $data;
+    if( defined $data and !$ref ){
+        $self->{_configfile} = $data;
         $self->_config(1);
+    }
+    elsif ( $ref and $ref eq 'HASH' ) {
+        $self->_config( 1, $data );
     }
     
     return $self->{_configfile};
@@ -101,9 +105,12 @@ sub debug {
 }
 
 sub _config{
-    my ($self,$bool) = @_;
+    my ($self,$bool,$data) = @_;
     
-    if( !$self->{__config} or $bool ){
+    if ( $bool and $data ) {
+        $self->{__config} = $data;
+    }
+    elsif( !$self->{__config} or $bool ){
         unless( $self->config ){
             croak "no config file given!";
         }
