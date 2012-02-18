@@ -3,7 +3,7 @@ Test:
   source:
     -
       type: File
-      path: D:/Git/EPublisher/Backend/lib/EPublisher.pm
+      path: ./test.pod
   target:
     type: EPub
     author: Renee Baecker
