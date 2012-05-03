@@ -27,7 +27,7 @@ sub load_source{
         return '';
     }
     
-    my @files = File::Find::Rule->file->name( qr/\.p(?:m|od|l)\z/ )->in( $path );
+    my @files = sort File::Find::Rule->file->name( qr/\.p(?:m|od|l)\z/ )->in( $path );
     my @pods;
     
     FILE:
