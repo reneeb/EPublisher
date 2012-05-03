@@ -12,7 +12,7 @@ use EPublisher::Utils::PPI qw(extract_pod);
 
 our @ISA = qw( EPublisher::Source::Base );
 
-our $VERSION = 0.03;
+our $VERSION = 0.04;
 
 sub load_source{
     my ($self) = @_;
@@ -26,7 +26,7 @@ sub load_source{
         return '';
     }
     
-    my $pod      = extract_pod( $file );
+    my $pod      = extract_pod( $file, $self->_config );
     my $filename = basename $file;
     my $title    = $filename;
 

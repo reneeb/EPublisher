@@ -1,5 +1,8 @@
 Revision history for Perl EPublisher.
 
+0.7  2012/05/03
+        + improve utf-8 handling
+
 0.6  2012/02/17
         + constructor accepts a hashreference as config, too.
 

@@ -15,14 +15,25 @@ our @EXPORT_OK = qw(
     extract_pod_from_code
 );
 
-our $VERSION = 0.1;
+our $VERSION = 0.2;
 
 sub extract_pod {
-    my ($file) = @_;
+    my ($file, $config) = @_;
     
     return if !$file || ! -f $file;
     
-    my $content = do{ local (@ARGV,$/) = $file; <> };
+    my $content;
+ 
+    if ( open my $fh, '<', $file ) {
+ 
+        if ( $config->{encoding} ) {
+            binmode $fh, ':encoding(' . $config->{encoding} . ')';
+        }
+ 
+        local $/;
+        $content = <$fh>;
+    } 
+
     return extract_pod_from_code( $content );
 }
 
