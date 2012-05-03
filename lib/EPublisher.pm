@@ -64,6 +64,7 @@ sub run{
         
         my @pods;
         for my $source ( @{$sources} ) {
+            die('No type in source.') unless (exists $source->{type});
             $self->debug('100: ' . $source->{type} );
             my $source_obj = EPublisher::Source->new( $source );
             $source_obj->publisher( $self );
