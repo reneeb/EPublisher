@@ -27,7 +27,7 @@ sub load_source{
     
     for my $path_to_check ( @paths ) {
         unless( $path_to_check && -d $path_to_check ) {
-            $self->publisher->debug( "400: $path -> " . ( -d $path or 0 ) );
+            $self->publisher->debug( "400: $path_to_check -> " . ( -d $path_to_check or 0 ) );
             next;
         }
         
