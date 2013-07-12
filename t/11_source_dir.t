@@ -5,7 +5,7 @@ use warnings;
 
 use Data::Dumper;
 
-use Test::More tests => 22; 
+use Test::More tests => 26; 
 use File::Basename;
 use File::Spec;
 use lib qw(../lib ../../perllib);
@@ -196,4 +196,34 @@ Ein Absatz im POD.
    
    is_deeply( \@info, $check, 'check return value of *::Dir::load_source()' );
    is $mock_publisher->debug, "400: $path -> 0", 'non existant dir not found (debug message)';
+}
+
+
+{
+   my $source = $module->new({
+      type => 'Dir',
+      path => File::Spec->catdir( dirname( __FILE__ ), 'lib' ),
+      title => 'package',
+   });
+   
+   ok( $source->isa( 'EPublisher::Source::Plugin::Dir' ), '$source isa EPublisher::Source::Plugin::Dir' );
+   ok( $source->isa( 'EPublisher::Source::Base' ),         '$source isa EPublisher::Source::Base' );
+
+   my ($info) = $source->load_source;
+   ok( $source->load_source, 'check *::Dir::load_source()' );
+
+   my $check = {
+       pod => '=pod
+
+=head1 Text - a test library for text output
+
+Ein Absatz im POD.
+
+=cut
+',
+       filename => 'Text.pm',
+       title => 'Test::Text',
+   };
+   
+   is_deeply( $info, $check, 'check return value of *::Dir::load_source()' );
 }

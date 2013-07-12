@@ -9,11 +9,11 @@ use File::Find::Rule;
 use File::Basename;
 
 use EPublisher::Source::Base;
-use EPublisher::Utils::PPI qw(extract_pod);
+use EPublisher::Utils::PPI qw(extract_pod extract_package);
 
 our @ISA = qw( EPublisher::Source::Base );
 
-our $VERSION = 0.04;
+our $VERSION = 0.05;
 
 sub load_source{
     my ($self) = @_;
@@ -51,6 +51,10 @@ sub load_source{
         if ( $options->{title} and $options->{title} eq 'pod' ) {
             ($title) = $pod =~ m{ =head1 \s+ (.*) }x;
             $title = '' if !defined $title;
+        }
+        elsif ( $options->{title} and $options->{title} eq 'package' ) {
+            my $package = extract_package( $file, $self->_config );
+            $title = $package if $package;
         }
         elsif ( $options->{title} and $options->{title} ne 'pod' ) {
             $title = $options->{title};
