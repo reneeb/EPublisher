@@ -1,5 +1,9 @@
 Revision history for Perl EPublisher.
 
+0.9  2013/07/11
+        + add extract_package to get namespace of package
+        + use namespace as title
+
 0.8  2013/07/11
         + check if a PPI object was created
         + handle lists of directories in Dir plugin (source)
