@@ -1,5 +1,10 @@
 Revision history for Perl EPublisher.
 
+0.8  2013/07/11
+        + check if a PPI object was created
+        + handle lists of directories in Dir plugin (source)
+        + improved tests for Dir plugin
+
 0.7  2012/05/03
         + improve utf-8 handling
 

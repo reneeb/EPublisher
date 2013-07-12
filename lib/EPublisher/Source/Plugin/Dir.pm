@@ -22,12 +22,21 @@ sub load_source{
     
     my $path = $options->{path};
     
-    unless( $path && -d $path ) {
-        $self->publisher->debug( "400: $path -> " . ( -d $path or 0 ) );
-        return '';
+    my @paths = ref $path eq 'ARRAY' ? @{$path} : ($path);
+    my @paths_to_use;
+    
+    for my $path_to_check ( @paths ) {
+        unless( $path_to_check && -d $path_to_check ) {
+            $self->publisher->debug( "400: $path -> " . ( -d $path or 0 ) );
+            next;
+        }
+        
+        push @paths_to_use, $path_to_check;
     }
     
-    my @files = sort File::Find::Rule->file->name( qr/\.p(?:m|od|l)\z/ )->in( $path );
+    return '' if !@paths_to_use;
+    
+    my @files = sort File::Find::Rule->file->name( qr/\.p(?:m|od|l)\z/ )->in( @paths_to_use );
     my @pods;
     
     FILE:

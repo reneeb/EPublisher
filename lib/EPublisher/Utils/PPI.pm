@@ -15,7 +15,7 @@ our @EXPORT_OK = qw(
     extract_pod_from_code
 );
 
-our $VERSION = 0.2;
+our $VERSION = 0.3;
 
 sub extract_pod {
     my ($file, $config) = @_;
@@ -43,6 +43,9 @@ sub extract_pod_from_code {
     return if !$code;
     
     my $parser    = PPI::Document->new( \$code );
+    
+    return if !$parser;
+    
     my $pod_nodes = $parser->find(
         sub {
              $_[1]->isa( 'PPI::Token::Pod' );
