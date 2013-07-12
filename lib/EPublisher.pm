@@ -10,7 +10,7 @@ use EPublisher::Config;
 use EPublisher::Source;
 use EPublisher::Target;
 
-our $VERSION = 0.9;
+our $VERSION = 1.0;
 
 sub new{
     my ($class,%args) = @_;

@@ -16,7 +16,7 @@ our @EXPORT_OK = qw(
     extract_pod_from_code
 );
 
-our $VERSION = 0.4;
+our $VERSION = 0.5;
 
 sub extract_package {
     my ($file, $config) = @_;
@@ -41,7 +41,11 @@ sub extract_package {
     
     return if !$parser;
     
-    my $package = $parser->find_first('PPI::Statement::Package')->namespace;
+    my $stmt = $parser->find_first('PPI::Statement::Package');
+    
+    return if !$stmt;
+    
+    my $package = $stmt->namespace;
     
     return $package;
 }
