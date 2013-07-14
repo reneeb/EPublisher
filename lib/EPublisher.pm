@@ -10,7 +10,7 @@ use EPublisher::Config;
 use EPublisher::Source;
 use EPublisher::Target;
 
-our $VERSION = 1.1;
+our $VERSION = 1.2;
 
 sub new{
     my ($class,%args) = @_;
@@ -70,9 +70,9 @@ sub run{
             $source_obj->publisher( $self );
             
             my @pod_source = $source_obj->load_source;
-            @pod_source = ({ pod => '', title => '', filename => '' }) if !@pod_source;
+            @pod_source = ({ pod => '', title => '', filename => '' }) if !@pod_source || !$pod_source[0];
             
-            $self->debug('101: ' . substr join( "", map{ my $info = ( $_ ? $_ : {pod=>""} ); $_->{pod} }@pod_source ), 0, 50 );
+            $self->debug('101: ' . substr join( "", map{ $_->{pod} }@pod_source ), 0, 50 );
             
             push @pods, @pod_source;
         }        
