@@ -45,14 +45,6 @@ sub deploy {
 __END__
 =pod
 
-=head1 NAME
-
-EPublisher::Target::Plugin::Text - Use Ascii text as a target for EPublisher
-
-=head1 VERSION
-
-version 0.4
-
 =head1 SYNOPSIS
 
   use EPublisher::Target;
@@ -77,29 +69,6 @@ creates the output.
     target:
       type: Text
       output: /path/to/test.txt
-
-=head1 COPYRIGHT & LICENSE
-
-Copyright 2012 Renee Baecker, all rights reserved.
-
-This program is free software; you can redistribute it and/or modify it
-under the same terms of Artistic License 2.0.
-
-=head1 AUTHOR
-
-Renee Baecker (E<lt>module@renee-baecker.deE<gt>)
-
-=head1 AUTHOR
-
-Renee Baecker <module@renee-baecker.de>
-
-=head1 COPYRIGHT AND LICENSE
-
-This software is Copyright (c) 2012 by Renee Baecker.
-
-This is free software, licensed under:
-
-  The Artistic License 2.0 (GPL Compatible)
 
 =cut
 
