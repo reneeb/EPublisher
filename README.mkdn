@@ -1,0 +1,164 @@
+[![Build Status](https://travis-ci.org/reneeb/EPublisher.svg?branch=master)](https://travis-ci.org/reneeb/EPublisher)
+[![Kwalitee status](http://cpants.cpanauthors.org/dist/EPublisher.png)](http://cpants.charsbar.org/dist/overview/EPublisher)
+[![GitHub issues](https://img.shields.io/github/issues/reneeb/EPublisher.svg)](https://github.com/reneeb/EPublisher/issues)
+
+# NAME
+
+EPublisher - Publish documents in new format
+
+# VERSION
+
+version 1.21
+
+# SYNOPSIS
+
+    use EPublisher;
+    
+    my $yaml     = './test.yml';
+    my @projects = qw(Test);
+    
+    my $deploy   = EPublisher->new;
+    $deploy->config( $yaml );
+    $deploy->run( \@projects );
+
+The correspondend YAML file:
+
+    ---
+    Test:
+      source:
+        type: Module
+        path: YAML::Tiny
+      target:
+        type: Text
+        path: C:\anything\YAML_Tiny.txt
+
+# DESCRIPTION
+
+This tool aims to simplify publishing of documents, mainly POD. To be extendable, it
+uses a simple plugin system. It uses YAML files for configuration (see [YAML::Tiny](https://metacpan.org/pod/YAML::Tiny))
+and many CPAN modules for this task.
+
+You can write your own plugins for your favourite source format
+(see [EPublisher::Source::Base](https://metacpan.org/pod/EPublisher::Source::Base)) and/or a plugin for your favourite output format.
+
+## Sources
+
+"Sources" are input sources of the POD. In this base package there are three source
+plugins:
+
+- Dir
+
+    Get all \*.pm and \*.pod files in the given directory and its subdirectories. See
+    [EPublisher::Source::Plugin::Dir](https://metacpan.org/pod/EPublisher::Source::Plugin::Dir).
+
+- File
+
+    The Pod will be extracted from the given file.
+
+- Module
+
+    This tool will try to get the POD off the module (without loading the module).
+
+[EPublisher::Source::Base](https://metacpan.org/pod/EPublisher::Source::Base) describes how you can write your own Source-Plugin.
+
+## Targets
+
+"Targets" are output formats. Currently there are two formats supported, but
+other target plugins will follow.
+
+- Text
+
+    converts POD to plain text.
+
+[EPublisher::Target::Base](https://metacpan.org/pod/EPublisher::Target::Base) describes how you can write your own Target-Plugin.
+
+# METHODS
+
+All methods available for EPublisher are described in the subsequent sections
+
+## new
+
+## config
+
+## run
+
+## projects
+
+## deploy
+
+## debug
+
+# PSEUDO PROTOCOL
+
+There is a small "pseudo" protocol for the debug messages:
+
+    100 start running source
+    101 stop running source (success)
+    102 error
+    
+    200 start running target plugin
+    201 stop running target plugin (success)
+    202 error
+    203 info from target plugin
+
+# PREREQUESITS
+
+[YAML::Tiny](https://metacpan.org/pod/YAML::Tiny), [Carp](https://metacpan.org/pod/Carp), [File::Spec](https://metacpan.org/pod/File::Spec), [File::Glob](https://metacpan.org/pod/File::Glob),
+
+
+
+# Development
+
+The distribution is contained in a Git repository, so simply clone the
+repository
+
+```
+$ git clone http://github.com/reneeb/EPublisher.git
+```
+
+and change into the newly-created directory.
+
+```
+$ cd EPublisher
+```
+
+The project uses [`Dist::Zilla`](https://metacpan.org/pod/Dist::Zilla) to
+build the distribution, hence this will need to be installed before
+continuing:
+
+```
+$ cpanm Dist::Zilla
+```
+
+To install the required prequisite packages, run the following set of
+commands:
+
+```
+$ dzil authordeps --missing | cpanm
+$ dzil listdeps --author --missing | cpanm
+```
+
+The distribution can be tested like so:
+
+```
+$ dzil test
+```
+
+To run the full set of tests (including author and release-process tests),
+add the `--author` and `--release` options:
+
+```
+$ dzil test --author --release
+```
+
+# AUTHOR
+
+Renee Baecker <module@renee-baecker.de>
+
+# COPYRIGHT AND LICENSE
+
+This software is Copyright (c) 2015 by Renee Baecker.
+
+This is free software, licensed under:
+
+    The Artistic License 2.0 (GPL Compatible)
