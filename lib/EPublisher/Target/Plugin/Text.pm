@@ -19,12 +19,18 @@ our $VERSION = 0.02;
 our $DEBUG   = 0;
 
 sub deploy {
-    my ($self) = @_;
+    my ($self, $sources) = @_;
     
-    my $pods     = $self->_config->{source} || [];
+    my $pods     = $sources || $self->_config->{source};
     my $width    = $self->_config->{width} || 78;
     my $sentence = $self->_config->{sentence};
     my $output   = $self->_config->{output};
+
+    $pods = []                   if !defined $pods;
+    $pods = [ { pod => $pods } ] if !ref $pods;
+
+    return if 'ARRAY' ne ref $pods;
+    return if !@{ $pods };
 
     if ( !$output ) {
         my $fh = File::Temp->new;
