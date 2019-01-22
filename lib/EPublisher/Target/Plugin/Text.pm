@@ -15,7 +15,7 @@ use EPublisher;
 use EPublisher::Target::Base;
 our @ISA = qw(EPublisher::Target::Base);
 
-our $VERSION = 0.02;
+our $VERSION = 0.03;
 our $DEBUG   = 0;
 
 sub deploy {
