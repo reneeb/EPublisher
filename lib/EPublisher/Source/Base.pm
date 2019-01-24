@@ -9,10 +9,11 @@ use Carp;
 our $VERSION = 0.02;
 
 sub new{
-    my ($class,$args) = @_;
+    my ($class,$args,%params) = @_;
     
     my $self = bless {}, $class;
     $self->_config( $args );
+    $self->publisher( $params{publisher} );
     
     return $self;
 }
