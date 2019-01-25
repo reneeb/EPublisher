@@ -141,15 +141,4 @@ These settings can be passed to the constructor
 
 =back
 
-=head1 COPYRIGHT & LICENSE
-
-Copyright 2010 - 2012 Renee Baecker, all rights reserved.
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of Artistic License 2.0.
-
-=head1 AUTHOR
-
-Renee Baecker (E<lt>module@renee-baecker.deE<gt>)
-
 =cut
