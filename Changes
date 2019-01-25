@@ -1,6 +1,11 @@
 Revision history for Perl EPublisher.
 =====================================
 
+1.24 2019-01-25 07:35:00
+
+  + accept additional parameter in ::Dir source plugin, so one can pass the source directory to `load_source`
+  + add tests
+
 1.23 2019-01-22 10:17:00
 
   + fix POD in ::Text target, thanks to @manwar

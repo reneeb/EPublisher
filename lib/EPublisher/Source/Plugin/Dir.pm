@@ -14,7 +14,7 @@ use EPublisher::Utils::PPI qw(extract_pod extract_package);
 
 our @ISA = qw( EPublisher::Source::Base );
 
-our $VERSION = 1.0;
+our $VERSION = 1.1;
 
 sub load_source{
     my ($self, $source_path) = @_;
