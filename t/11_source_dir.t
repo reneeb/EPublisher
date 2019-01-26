@@ -17,7 +17,8 @@ my $module = 'EPublisher::Source';
 use_ok( $module );
 
 {
-    package MockPublisher;
+    package # private package
+        MockPublisher;
     
     my $test = '';
     
