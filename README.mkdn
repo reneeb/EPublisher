@@ -8,7 +8,7 @@ EPublisher - Publish documents in new format
 
 # VERSION
 
-version 1.25
+version 1.26
 
 # SYNOPSIS
 

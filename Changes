@@ -1,6 +1,11 @@
 Revision history for Perl EPublisher.
 =====================================
 
+1.26 2019-01-27 08:35:00
+
+  + accept a module name as parameter to load_source in ::Module plugin, make debugging easier
+  + add tests
+
 1.25 2019-01-26 09:13:00
 
   + accept a path as parameter to load_source in ::File plugin, make debugging easier
