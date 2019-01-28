@@ -11,6 +11,8 @@ our $VERSION = 0.01;
 sub new{
     my ($class,$args) = @_;
     my $self;
+
+    croak 'No source type given' if !$args->{type};
     
     my $plugin = 'EPublisher::Source::Plugin::' . $args->{type};
     eval{

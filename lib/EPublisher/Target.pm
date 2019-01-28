@@ -12,6 +12,8 @@ sub new{
     my ($class,$args) = @_;
     my $self;
     
+    croak 'No target type given' if !$args->{type};
+
     my $plugin = 'EPublisher::Target::Plugin::' . $args->{type};
     eval{
         (my $file = $plugin) =~ s!::!/!g;
